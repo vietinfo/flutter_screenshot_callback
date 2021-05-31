@@ -62,9 +62,9 @@ class ScreenshotCallback {
     await _channel.invokeMethod(FLUTTER_STOP_SCREENSHOT);
   }
 
-  // List<ScreenshotCallbackData> getData() {
-  //   return _listTempData;
-  // }
+  List<ScreenshotCallbackData> getData() {
+    return _listTempData;
+  }
 
   void clearData() {
     _listTempData.clear();
