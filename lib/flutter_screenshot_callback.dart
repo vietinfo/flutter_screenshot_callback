@@ -13,6 +13,8 @@ class ScreenshotCallback {
 
   final List<ScreenshotCallbackData> _listTempData = <ScreenshotCallbackData>[];
 
+  static final ScreenshotCallback instance = ScreenshotCallback._();
+
   ScreenshotCallback._() {
     _channel.setMethodCallHandler(methodCallHandler);
   }
