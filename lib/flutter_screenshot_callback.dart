@@ -83,6 +83,6 @@ class ScreenshotCallbackData {
 }
 
 abstract class IScreenshotCallback {
-  screenshotCallback(List<ScreenshotCallbackData> data);
-  deniedPermission(ScreenshotCallbackData data);
+  void screenshotCallback(List<ScreenshotCallbackData> data);
+  void deniedPermission(ScreenshotCallbackData data);
 }
