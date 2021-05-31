@@ -18,6 +18,8 @@ class ScreenshotCallback {
   static ScreenshotCallback instance = ScreenshotCallback._();
 
   ScreenshotCallback._() {
+    screenshotCallbackStream =
+        StreamController<List<ScreenshotCallbackData>>.broadcast();
     _channel.setMethodCallHandler(methodCallHandler);
   }
 
