@@ -15,11 +15,13 @@ class ScreenshotCallback {
 
   static final ScreenshotCallback instance = ScreenshotCallback._();
 
+  final StreamController<List<ScreenshotCallbackData>>
+      streamCtrlDataScreenshot =
+      StreamController<List<ScreenshotCallbackData>>.broadcast();
+
   ScreenshotCallback._() {
     _channel.setMethodCallHandler(methodCallHandler);
   }
-
-  IScreenshotCallback? _iScreenshotCallback;
 
   Future<dynamic> methodCallHandler(MethodCall call) async {
     switch (call.method) {
@@ -32,18 +34,19 @@ class ScreenshotCallback {
               isPermission: true,
               path: path,
               error: ''));
-
-          _iScreenshotCallback?.screenshotCallback(_listTempData);
+          streamCtrlDataScreenshot.sink.add(_listTempData);
         }
         break;
       case NATIVE_DENIED_PERMISSION:
         {
           print("Screenshot callback, no permission");
-          _iScreenshotCallback?.deniedPermission(ScreenshotCallbackData(
-              id: 0,
-              isPermission: false,
-              path: '',
-              error: 'Screenshot callback, no permission'));
+          streamCtrlDataScreenshot.sink.add(<ScreenshotCallbackData>[
+            ScreenshotCallbackData(
+                id: 0,
+                isPermission: false,
+                path: '',
+                error: 'Screenshot callback, no permission')
+          ]);
         }
         break;
     }
@@ -55,14 +58,13 @@ class ScreenshotCallback {
   }
 
   void stopScreenshot() async {
+    streamCtrlDataScreenshot.close();
     await _channel.invokeMethod(FLUTTER_STOP_SCREENSHOT);
   }
 
-  List<ScreenshotCallbackData> getData(
-      IScreenshotCallback iScreenshotCallback) {
-    _iScreenshotCallback = iScreenshotCallback;
-    return _listTempData;
-  }
+  // List<ScreenshotCallbackData> getData() {
+  //   return _listTempData;
+  // }
 
   void clearData() {
     _listTempData.clear();
