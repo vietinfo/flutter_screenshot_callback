@@ -83,8 +83,3 @@ class ScreenshotCallbackData {
       this.isPermission = false,
       this.error = 'error'});
 }
-
-abstract class IScreenshotCallback {
-  void screenshotCallback(List<ScreenshotCallbackData> data);
-  void deniedPermission(ScreenshotCallbackData data);
-}
