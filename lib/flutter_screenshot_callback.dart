@@ -11,17 +11,13 @@ class ScreenshotCallback {
   static const String NATIVE_SCREENSHOT_CALLBACK = "screenshotCallback";
   static const String NATIVE_DENIED_PERMISSION = "deniedPermission";
 
-  late StreamController<List<ScreenshotCallbackData>> screenshotCallbackStream;
-
   final List<ScreenshotCallbackData> _listTempData = <ScreenshotCallbackData>[];
 
-  static ScreenshotCallback instance = ScreenshotCallback._();
-
   ScreenshotCallback._() {
-    screenshotCallbackStream =
-        StreamController<List<ScreenshotCallbackData>>.broadcast();
     _channel.setMethodCallHandler(methodCallHandler);
   }
+
+  IScreenshotCallback? _iScreenshotCallback;
 
   Future<dynamic> methodCallHandler(MethodCall call) async {
     switch (call.method) {
@@ -34,19 +30,18 @@ class ScreenshotCallback {
               isPermission: true,
               path: path,
               error: ''));
-          screenshotCallbackStream.sink.add(_listTempData);
+
+          _iScreenshotCallback?.screenshotCallback(_listTempData);
         }
         break;
       case NATIVE_DENIED_PERMISSION:
         {
           print("Screenshot callback, no permission");
-          screenshotCallbackStream.sink.add(<ScreenshotCallbackData>[
-            ScreenshotCallbackData(
-                id: 0,
-                isPermission: false,
-                path: '',
-                error: 'Screenshot callback, no permission')
-          ]);
+          _iScreenshotCallback?.deniedPermission(ScreenshotCallbackData(
+              id: 0,
+              isPermission: false,
+              path: '',
+              error: 'Screenshot callback, no permission'));
         }
         break;
     }
@@ -54,14 +49,17 @@ class ScreenshotCallback {
   }
 
   void startScreenshot() async {
-    screenshotCallbackStream =
-        StreamController<List<ScreenshotCallbackData>>.broadcast();
     await _channel.invokeMethod(FLUTTER_START_SCREENSHOT);
   }
 
   void stopScreenshot() async {
-    screenshotCallbackStream.close();
     await _channel.invokeMethod(FLUTTER_STOP_SCREENSHOT);
+  }
+
+  List<ScreenshotCallbackData> getData(
+      IScreenshotCallback iScreenshotCallback) {
+    _iScreenshotCallback = iScreenshotCallback;
+    return _listTempData;
   }
 
   void clearData() {
@@ -80,4 +78,9 @@ class ScreenshotCallbackData {
       this.path = '',
       this.isPermission = false,
       this.error = 'error'});
+}
+
+abstract class IScreenshotCallback {
+  screenshotCallback(List<ScreenshotCallbackData> data);
+  deniedPermission(ScreenshotCallbackData data);
 }

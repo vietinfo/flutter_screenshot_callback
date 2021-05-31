@@ -18,24 +18,24 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initCallback();
+    // initCallback();
   }
 
-  void initCallback() {
-    ScreenshotCallback.instance.startScreenshot();
-    ScreenshotCallback.instance.screenshotCallbackStream.stream.listen((event) {
-      print(event);
-      setState(() {
-        _imagePath = event.first.path;
-      });
-    });
-  }
+  // void initCallback() {
+  //   ScreenshotCallback.instance.startScreenshot();
+  //   ScreenshotCallback.instance.screenshotCallbackStream.stream.listen((event) {
+  //     print(event);
+  //     setState(() {
+  //       _imagePath = event.first.path;
+  //     });
+  //   });
+  // }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    ScreenshotCallback.instance.stopScreenshot();
+    // ScreenshotCallback.instance.stopScreenshot();
   }
 
   @override
